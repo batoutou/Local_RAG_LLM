@@ -1,4 +1,5 @@
 import streamlit as st
+from threading import Thread
 
 from langChain import langchain
 
@@ -23,8 +24,6 @@ class interface :
             }
         </style>
         """
-    
-    def create_interface(self):
         # Display the custom HTML
         st.set_page_config(layout="wide")
         st.components.v1.html(self.custom_html)
@@ -36,11 +35,17 @@ class interface :
 
         st.title("Kickmaker AI bot !")
         
-        if "messages" not in st.session_state:
-            st.session_state["messages"] = [{"role": "assistant", "content": "Comment puis-je vous aider ?"}]
+        thread = Thread(target = self.update_interface)
+        thread.start()
+    
+    def update_interface(self):
+        
+        while True:
+            if "messages" not in st.session_state:
+                st.session_state["messages"] = [{"role": "assistant", "content": "Comment puis-je vous aider ?"}]
 
-        for msg in st.session_state.messages:
-            st.chat_message(msg["role"]).write(msg["content"])
+            for msg in st.session_state.messages:
+                st.chat_message(msg["role"]).write(msg["content"])
     
     def input_query(self):
         
@@ -49,15 +54,15 @@ class interface :
             
             # display user question
             st.session_state.messages.append({"role": "user", "content": question})
-            st.chat_message("user").write(question)
+            # st.chat_message("user").write(question)
             
             # Generate the answer
             answer = self.chain.get_chatbot_answer(question)
             
-            st.chat_message("assistant").write_stream(answer)
+            # st.chat_message("assistant").write(answer)
             
-            print("answer is :", answer)
+            # print("answer is :", answer)
                         
             # display chatbot answer
             st.session_state.messages.append({"role": "assistant", "content": answer})
-                        
+            

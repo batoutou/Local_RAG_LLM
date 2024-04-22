@@ -1,1 +1,1 @@
-streamlit run main.py
+streamlit run main.py --server.fileWatcherType none

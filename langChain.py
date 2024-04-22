@@ -29,7 +29,7 @@ class langchain :
         return embeddings
     
     def get_llm(self):
-        llm = ChatOllama(model="llama3", temperature=0)
+        llm = ChatOllama(model="llama3", temperature=0.2)
         
         return llm
     
@@ -38,8 +38,6 @@ class langchain :
         prompt = self.get_prompt()        
         chain = prompt | self.llm | StrOutputParser()
                 
-        response = chain.invoke({"question": question})
-                
-        answer = response.content
+        answer = chain.invoke({"question": question})                
                 
         return answer
