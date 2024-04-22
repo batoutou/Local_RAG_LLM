@@ -1,6 +1,5 @@
 import collections
 
-from langchain_community.embeddings import OllamaEmbeddings
 from langchain_community.chat_models import ChatOllama
 from langchain.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
@@ -17,17 +16,12 @@ class langchain :
 
             Helpful Answer:"""
                         
-        self.embeddings = self.get_embeddings()
         self.llm = self.get_llm()
     
     def get_prompt(self):
         prompt = ChatPromptTemplate.from_template(self.template)
         return prompt
-    
-    def get_embeddings(self) -> OllamaEmbeddings:
-        embeddings = OllamaEmbeddings(model="llama3")
-        return embeddings
-    
+        
     def get_llm(self):
         llm = ChatOllama(model="llama3", temperature=0.2)
         

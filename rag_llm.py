@@ -6,11 +6,14 @@ from langchain.vectorstores.chroma import Chroma
 import os
 import shutil
 
-class rag :
+from langchain_community.embeddings import OllamaEmbeddings
+
+class rag_llm:
     
     def __init__(self) -> None:
         
-        self.chroma_client = chromadb.Client()
+        # self.chroma_client = chromadb.Client()
+        self.embeddings = OllamaEmbeddings(model="llama3")
     
     def upload_data(self, path):
         pass
