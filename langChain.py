@@ -17,6 +17,7 @@ class langchain :
             Helpful Answer:"""
                         
         self.llm = self.get_llm()
+        self.retriever = None
     
     def get_prompt(self):
         prompt = ChatPromptTemplate.from_template(self.template)
@@ -29,8 +30,11 @@ class langchain :
     
     def get_chatbot_answer(self, question):
         
-        prompt = self.get_prompt()        
-        chain = prompt | self.llm | StrOutputParser()
+        prompt = self.get_prompt()   
+        if self.retriever: 
+            chain = ({"context": self.retriever} | prompt | self.llm | StrOutputParser())
+        else: 
+            chain = prompt | self.llm | StrOutputParser()
                 
         answer = chain.invoke({"question": question})                
                 

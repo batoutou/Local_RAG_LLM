@@ -1,12 +1,12 @@
-from langchain_community.document_loaders import DirectoryLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.schema import Document
-from langchain_community.embeddings import OpenAIEmbeddings
-from langchain.vectorstores.chroma import Chroma
 import os
 import shutil
 
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.schema import Document
+from langchain.vectorstores.chroma import Chroma
 from langchain_community.embeddings import OllamaEmbeddings
+from langchain_community.document_loaders import PyPDFLoader
+from langchain.vectorstores.utils import filter_complex_metadata
 
 class rag_llm:
     
@@ -14,23 +14,37 @@ class rag_llm:
         
         # self.chroma_client = chromadb.Client()
         self.embeddings = OllamaEmbeddings(model="llama3")
-    
-    def upload_data(self, path):
-        pass
-    
-    def generate_data_store(self):
         
-        documents = self.load_documents()
-        chunks = self.split_text(documents)
-        self.save_to_chroma(chunks)
+        self.data_path = 'data'
+        self.db_path = 'vec_db'
+        
+        if os.path.exists(self.data_path):
+            shutil.rmtree(self.data_path)
+        os.makedirs(self.data_path)
+        
+        if os.path.exists(self.db_path):
+            shutil.rmtree(self.db_path)
+        os.makedirs(self.db_path)
     
-    def load_documents(self, data_path):
-        loader = DirectoryLoader(data_path, glob="*.md")
-        documents = loader.load()
-        return documents
+    def upload_data(self, uploaded_files):
+        self.docs = []
+        
+        for file in uploaded_files:
+            file_path = os.path.join(self.data_path, file.name)
+            with open(file_path, 'wb') as f:
+                f.write(file.getvalue())
+                
+            loader = PyPDFLoader(file_path)
+            self.docs.extend(loader.load())
+            
+    
+    def make_vector_db(self):
+        
+        chunks = self.split_text(self.docs)
+        self.retriever = self.save_to_chroma(chunks)
+    
 
-
-    def split_text(self, documents: list[Document]):
+    def split_text(self, documents):
         text_splitter = RecursiveCharacterTextSplitter(
             chunk_size=300,
             chunk_overlap=100,
@@ -38,22 +52,26 @@ class rag_llm:
             add_start_index=True,
         )
         chunks = text_splitter.split_documents(documents)
+        chunks = filter_complex_metadata(chunks)
+        
         print(f"Split {len(documents)} documents into {len(chunks)} chunks.")
-
-        document = chunks[10]
-        print(document.page_content)
-        print(document.metadata)
 
         return chunks
     
-    def save_to_chroma(self, chunks:list[Document], db_path):
-        # Clear out the database first.
-        if os.path.exists(db_path):
-            shutil.rmtree(db_path)
-
+    def save_to_chroma(self, chunks):
         # Create a new DB from the documents.
         db = Chroma.from_documents(
-            chunks, OpenAIEmbeddings(), persist_directory=db_path
+            chunks, OllamaEmbeddings(), persist_directory = self.db_path
         )
         db.persist()
-        print(f"Saved {len(chunks)} chunks to {db_path}.")
+        print(f"Saved {len(chunks)} chunks to {self.db_path}.")
+        
+        retriever = db.as_retriever(
+            search_type="similarity_score_threshold",
+            search_kwargs={
+                "k": 3,
+                "score_threshold": 0.5,
+            },
+        )
+        
+        return retriever
