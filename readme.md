@@ -13,3 +13,5 @@ I you want to run this application on a linux platform, you will need to run the
  ```
 source setup_linux.sh
  ``` 
+
+ https://medium.com/@dmitri.mahayana/create-chatbot-text-to-image-using-stable-diffusion-and-streamlit-fb88ffda97d2

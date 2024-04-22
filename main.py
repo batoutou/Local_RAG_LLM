@@ -1,8 +1,5 @@
 import streamlit as st
 
-from langchain.chains import ConversationChain
-from langchain.memory import ConversationBufferMemory
-
 from rag_llm import rag_llm
 from langChain import langchain
 
@@ -16,12 +13,12 @@ custom_html = """
         <style>
             .banner {
                 width: 100%;
-                height: 200px;
+                height: 100%;
                 overflow: hidden;
             }
             .banner img {
                 width: 100%;
-                object-fit: cover;
+                object-fit: fill;
             }
         </style>
         """
@@ -50,7 +47,6 @@ if question := st.chat_input(placeholder="Ask your question here !"):
     with st.chat_message("assistant"):
         with st.spinner("Thinking..."):
             answer = langchain_llm.get_chatbot_answer(question)
-            print("ANSWER : ", answer)
             st.write(answer)
         
     st.session_state.messages.append({"role": "assistant", "content": answer})
