@@ -10,6 +10,8 @@ class langchain :
         
         self.template = """You're a helpful AI assistant tasked to answer the user's questions.
             You're friendly and you answer extensively with multiple sentences. 
+            To help you, you can use the following context : {context}
+
             You prefer to use bullet points to summarize.
 
             Question: {question}
@@ -31,11 +33,9 @@ class langchain :
     def get_chatbot_answer(self, question):
         
         prompt = self.get_prompt()   
-        if self.retriever: 
-            chain = ({"context": self.retriever} | prompt | self.llm | StrOutputParser())
-        else: 
-            chain = prompt | self.llm | StrOutputParser()
-                
-        answer = chain.invoke({"question": question})                
+        
+        chain = ({"context": self.retriever, "question": question} | prompt | self.llm | StrOutputParser())
+        print(chain)
+        answer = chain.invoke()                
                 
         return answer

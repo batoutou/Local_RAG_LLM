@@ -19,13 +19,13 @@ class rag_llm:
         self.data_path = 'data'
         self.db_path = 'vec_db'
         
-        if os.path.exists(self.data_path):
-            shutil.rmtree(self.data_path)
-        os.makedirs(self.data_path)
+        if not os.path.exists(self.data_path):
+            # shutil.rmtree(self.data_path)
+            os.makedirs(self.data_path)
         
-        if os.path.exists(self.db_path):
-            shutil.rmtree(self.db_path)
-        os.makedirs(self.db_path)
+        # if os.path.exists(self.db_path):
+        #     shutil.rmtree(self.db_path)
+        # os.makedirs(self.db_path)
         
         self.get_chromadb()
         
@@ -36,9 +36,7 @@ class rag_llm:
         
         for file in uploaded_files:
             if not os.path.isfile(os.path.join("data", file.name)):
-            
                 file_path = os.path.join(self.data_path, file.name)
-                print("PATH :", file_path)
                 with open(file_path, 'wb') as f:
                     f.write(file.getvalue())
                     
@@ -83,12 +81,10 @@ class rag_llm:
             self.db = Chroma(persist_directory=self.db_path, embedding_function=self.embeddings)
         
         else:
-            client = chromadb.PersistentClient()
+            client = chromadb.PersistentClient(path=self.db_path)
             collection = client.get_or_create_collection("Documents")
-            self.db = Chroma(client=client, collection_name="Documents", embedding_function=self.embeddings)
-        
-        print(self.db)
-    
+            self.db = Chroma(persist_directory=self.db_path, client=client, collection_name="Documents", embedding_function=self.embeddings)
+            
     def make_db_retriever(self):
         self.retriever = self.db.as_retriever(
             search_type="similarity_score_threshold",
