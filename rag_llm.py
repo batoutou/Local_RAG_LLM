@@ -66,13 +66,14 @@ class rag_llm:
         )
 
         print(f"Saved {len(chunks)} chunks to {self.db_path}.")
+    
+    def get_data_retriever(self):
+        retriever = db.as_retriever(
+            search_type="similarity_score_threshold",
+            search_kwargs={
+                "k": 3,
+                "score_threshold": 0.5,
+            },
+        )
         
-        # retriever = db.as_retriever(
-        #     search_type="similarity_score_threshold",
-        #     search_kwargs={
-        #         "k": 3,
-        #         "score_threshold": 0.5,
-        #     },
-        # )
-        
-        # return retriever
+        return retriever
