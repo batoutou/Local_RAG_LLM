@@ -36,12 +36,9 @@ uploaded_file = st.sidebar.file_uploader("Upload files to add to your knowledge 
 st.title("Kickmaker AI bot !")
 
 if uploaded_file:
-    if os.path.isfile(os.path.join("data", uploaded_file.name)):
-        print("UP FILE :", uploaded_file)
-        rag_llm.upload_data(uploaded_file)
-        rag_llm.make_vector_db()
+    rag_llm.upload_data(uploaded_file)
     
-    langchain_llm.retriever = rag_llm.retriever
+langchain_llm.retriever = rag_llm.retriever
 
 if "messages" not in st.session_state:
     st.session_state["messages"] = [{"role": "assistant", "content": "How can I help you?"}]
