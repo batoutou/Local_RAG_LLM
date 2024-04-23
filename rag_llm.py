@@ -54,6 +54,8 @@ class rag_llm:
         chunks = filter_complex_metadata(chunks)
         
         print(f"Split {len(documents)} documents into {len(chunks)} chunks.")
+        
+        # print(chunks[0])
 
         return chunks
     
@@ -62,15 +64,15 @@ class rag_llm:
         db = Chroma.from_documents(
             chunks, self.embeddings, persist_directory = self.db_path
         )
-        db.persist()
+
         print(f"Saved {len(chunks)} chunks to {self.db_path}.")
         
-        retriever = db.as_retriever(
-            search_type="similarity_score_threshold",
-            search_kwargs={
-                "k": 3,
-                "score_threshold": 0.5,
-            },
-        )
+        # retriever = db.as_retriever(
+        #     search_type="similarity_score_threshold",
+        #     search_kwargs={
+        #         "k": 3,
+        #         "score_threshold": 0.5,
+        #     },
+        # )
         
-        return retriever
+        # return retriever

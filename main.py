@@ -38,7 +38,7 @@ if uploaded_file:
     rag_llm.upload_data(uploaded_file)
     rag_llm.make_vector_db()
     
-    langchain_llm.retriever = rag_llm.retriever
+    # langchain_llm.retriever = rag_llm.retriever
 
 if "messages" not in st.session_state:
     st.session_state["messages"] = [{"role": "assistant", "content": "How can I help you?"}]
