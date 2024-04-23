@@ -31,19 +31,18 @@ class rag_llm:
         
         for file in uploaded_files:
             file_path = os.path.join(self.data_path, file.name)
+            print("PATH :", file_path)
             with open(file_path, 'wb') as f:
                 f.write(file.getvalue())
                 
             loader = PyPDFLoader(file_path)
             self.docs.extend(loader.load())
-            
-    
+                
     def make_vector_db(self):
         
         chunks = self.split_text(self.docs)
         self.retriever = self.save_to_chroma(chunks)
     
-
     def split_text(self, documents):
         text_splitter = RecursiveCharacterTextSplitter(
             chunk_size=300,
@@ -61,7 +60,7 @@ class rag_llm:
     def save_to_chroma(self, chunks):
         # Create a new DB from the documents.
         db = Chroma.from_documents(
-            chunks, OllamaEmbeddings(), persist_directory = self.db_path
+            chunks, self.embeddings, persist_directory = self.db_path
         )
         db.persist()
         print(f"Saved {len(chunks)} chunks to {self.db_path}.")
