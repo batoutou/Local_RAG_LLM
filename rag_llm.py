@@ -9,6 +9,7 @@ from langchain.vectorstores.chroma import Chroma
 from langchain_community.embeddings import OllamaEmbeddings
 from langchain_community.document_loaders import PyPDFLoader
 from langchain.vectorstores.utils import filter_complex_metadata
+from langchain.chains import RetrievalQAWithSourcesChain
 
 class rag_llm:
     
@@ -27,10 +28,8 @@ class rag_llm:
         #     shutil.rmtree(self.db_path)
         # os.makedirs(self.db_path)
         
-        self.get_chromadb()
-        
-        self.make_db_retriever()
-            
+        self.get_chroma()
+                    
     def upload_data(self, uploaded_files):
         self.docs = []
         
@@ -45,9 +44,7 @@ class rag_llm:
                 
         if self.docs:
             self.add_documents()
-        
-        self.make_db_retriever()
-                
+                        
     def add_documents(self):
         
         chunks = self.split_text(self.docs)
@@ -75,7 +72,7 @@ class rag_llm:
 
         print(f"Saved {len(chunks)} chunks to {self.db_path}.")
         
-    def get_chromadb(self):
+    def get_chroma(self):
         
         if os.path.isfile("vec_db/chroma.sqlite3"):
             self.db = Chroma(persist_directory=self.db_path, embedding_function=self.embeddings)
@@ -85,11 +82,10 @@ class rag_llm:
             collection = client.get_or_create_collection("Documents")
             self.db = Chroma(persist_directory=self.db_path, client=client, collection_name="Documents", embedding_function=self.embeddings)
             
-    def make_db_retriever(self):
-        self.retriever = self.db.as_retriever(
-            search_type="similarity_score_threshold",
-            search_kwargs={
-                "k": 3,
-                "score_threshold": 0.5,
-            },
-        )
+    def search_chroma(self, question):
+        # Search the DB
+        results = self.db.similarity_search_with_score(question, k=5)
+
+        context = "\n\n---\n\n".join([doc.page_content for doc, _score in results])
+
+        return context

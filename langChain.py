@@ -15,8 +15,12 @@ class langchain :
             You prefer to use bullet points to summarize.
 
             Question: {question}
+            """
 
-            Helpful Answer:"""
+        # self.template = """Answer the question based only on the following context : {context}
+
+        #     Answer the question using only the above context: {question}
+        #     """
                         
         self.llm = self.get_llm()
         self.retriever = None
@@ -30,12 +34,11 @@ class langchain :
         
         return llm
     
-    def get_chatbot_answer(self, question):
+    def get_chatbot_answer(self, question, context):
         
         prompt = self.get_prompt()   
         
-        chain = ({"context": self.retriever, "question": question} | prompt | self.llm | StrOutputParser())
-        print(chain)
-        answer = chain.invoke()                
+        chain = prompt | self.llm | StrOutputParser()
+        answer = chain.invoke({"context": context, "question": question})       
                 
         return answer

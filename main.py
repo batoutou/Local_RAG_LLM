@@ -1,4 +1,7 @@
 import os 
+import sys
+import shutil
+
 import streamlit as st
 
 from rag_llm import rag_llm
@@ -38,8 +41,6 @@ st.title("Kickmaker AI bot !")
 if uploaded_file:
     rag_llm.upload_data(uploaded_file)
     
-langchain_llm.retriever = rag_llm.retriever
-
 if "messages" not in st.session_state:
     st.session_state["messages"] = [{"role": "assistant", "content": "How can I help you?"}]
 
@@ -52,7 +53,8 @@ if question := st.chat_input(placeholder="Ask your question here !"):
 
     with st.chat_message("assistant"):
         with st.spinner("Thinking..."):
-            answer = langchain_llm.get_chatbot_answer(question)
+            context = rag_llm.search_chroma(question)
+            answer = langchain_llm.get_chatbot_answer(question, context)
             st.write(answer)
         
     st.session_state.messages.append({"role": "assistant", "content": answer})

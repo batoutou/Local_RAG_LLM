@@ -1,15 +1,19 @@
-langchain[all]
-pypdf
-streamlit
+matplotlib
 
-# Vector DB
-chromadb
+# langchain[all]
+# pypdf
+# streamlit
+
+# # Vector DB
+# chromadb
 
 # stable diffusion
-pip install diffusers #[torch]
-pip install transformers
-pip install diffusers --upgrade
-pip install invisible_watermark accelerate safetensors
+huggingface_hub
+transformers
+diffusers 
+invisible_watermark 
+accelerate 
+safetensors
 cycler
 peft
 kiwisolver
