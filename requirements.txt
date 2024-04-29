@@ -17,6 +17,7 @@ safetensors
 cycler
 peft
 kiwisolver
+onnxruntime-openvino
 
 
 # openai
