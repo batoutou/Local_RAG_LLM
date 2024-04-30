@@ -1,3 +1,7 @@
 venv
 
 __pycache__
+
+data
+
+vec_db
