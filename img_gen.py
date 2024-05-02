@@ -16,14 +16,6 @@ class img_gen:
         
         self.pipe = StableDiffusionPipeline.from_pretrained(model_id, torch_dtype=torch.float16).to("cuda")
         self.pipe.scheduler = DPMSolverMultistepScheduler.from_config(self.pipe.scheduler.config)
-
-        # Load model
-        # self.pipe = DiffusionPipeline.from_pretrained(model_id, torch_dtype=torch.float16, variant="fp16").to("cuda")
-        # self.pipe.load_lora_weights(hf_hub_download(repo_name, ckpt_name))
-        # self.pipe.fuse_lora()
-
-        # Ensure ddim scheduler timestep spacing set as trailing !!!
-        # self.pipe.scheduler = DDIMScheduler.from_config(self.pipe.scheduler.config, timestep_spacing="trailing")
         
     def small_sd(self):
         # Initialize the Stable Diffusion model
@@ -40,20 +32,6 @@ class img_gen:
     
     def generate_img(self, prompt):
         # Generate the image
-        # self.image = self.pipe(prompt=prompt, num_inference_steps=1, guidance_scale=0).images[0]
-        # self.image = self.pipe(prompt=prompt, num_inference_steps=8, guidance_scale=0).images[0]
-        self.image = self.pipe(prompt).images[0]
+        self.image = self.pipe(prompt=prompt, num_inference_steps=8).images[0]
 
         return self.image
-    
-    def display_img(self):
-        
-        imgplot = plt.imshow(self.image)
-        plt.show()
-        
-    
-
-# imggen = img_gen()
-
-# imggen.generate_img("a pink panther")
-# imggen.display_img()

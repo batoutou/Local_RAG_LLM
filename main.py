@@ -4,10 +4,19 @@ from rag_llm import rag_llm
 from langChain import langchain
 from img_gen import img_gen
 
-# create instances for each process
-query_llm = rag_llm()
-langchain_llm = langchain()
-image_gen = img_gen()
+# create instances for each process and store them in the session 
+if "models" not in st.session_state.keys():
+    query_llm = rag_llm()
+    langchain_llm = langchain()
+    image_gen = img_gen()
+    st.session_state["models"] = [query_llm, langchain_llm, image_gen]
+
+# recover the stored instances
+query_llm, langchain_llm, image_gen = st.session_state["models"]
+
+# recover the added pdf files if there are some
+if "files" not in st.session_state.keys():
+    st.session_state["files"] = False
 
 # custom HTML code for visual 
 custom_html = """
@@ -42,9 +51,22 @@ st.title("Kickmaker AI bot !")
 
 # check if a new pdf file was uploaded
 if uploaded_file:
-    # run the new file through the embedding DB creator
+    # Set the boolean to True if files are present
+    st.session_state["files"] = True
+    # recover the chroma DB 
+    query_llm.get_chroma()
+    # add the new files to the chroma DB
     query_llm.upload_data(uploaded_file)
 
+# check if all pdf have been deleted 
+if not uploaded_file and st.session_state["files"] is True:
+    # Set the boolean to False if files have been removed
+    st.session_state["files"] = False
+    # delete the chroma DB
+    query_llm.remove_chroma()
+    # recreate a new empty one+
+    query_llm.get_chroma()
+    
 # If the program is starting and there is no messages at all
 if "messages" not in st.session_state:
     # print a welcoming message to engage the discussion"
@@ -84,7 +106,7 @@ if question := st.chat_input(placeholder="Ask your question here !"):
         with st.chat_message("assistant"):
             with st.spinner("Thinking..."):
                 # querry the pdf DB for useful data
-                context = query_llm.search_chroma(question)
+                context = query_llm.search_chroma(question, querry_type)
                 # get a proper answer based on this useful data and the model's knowledge 
                 answer = langchain_llm.get_chatbot_answer(question, context, querry_type="text")
                 # send the text to the message buffer

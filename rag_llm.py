@@ -12,24 +12,17 @@ from langchain.vectorstores.utils import filter_complex_metadata
 from langchain.chains import RetrievalQAWithSourcesChain
 
 class rag_llm:
-    
     def __init__(self) -> None:
-        
+        # get vector embeddings model
         self.embeddings = OllamaEmbeddings(model="llama3")
         
+        # path to data and vector DB
         self.data_path = 'data'
         self.db_path = 'vec_db'
-        
-        if not os.path.exists(self.data_path):
-            # shutil.rmtree(self.data_path)
-            os.makedirs(self.data_path)
-        
-        # if os.path.exists(self.db_path):
-        #     shutil.rmtree(self.db_path)
-        # os.makedirs(self.db_path)
-        
+
         self.get_chroma()
-                    
+    
+    # upload PDF file to the system                  
     def upload_data(self, uploaded_files):
         self.docs = []
         
@@ -73,6 +66,9 @@ class rag_llm:
         print(f"Saved {len(chunks)} chunks to {self.db_path}.")
         
     def get_chroma(self):
+
+        if not os.path.exists(self.data_path):
+            os.makedirs(self.data_path)
         
         if os.path.isfile("vec_db/chroma.sqlite3"):
             self.db = Chroma(persist_directory=self.db_path, embedding_function=self.embeddings)
@@ -82,10 +78,23 @@ class rag_llm:
             collection = client.get_or_create_collection("Documents")
             self.db = Chroma(persist_directory=self.db_path, client=client, collection_name="Documents", embedding_function=self.embeddings)
             
-    def search_chroma(self, question):
-        # Search the DB
-        results = self.db.similarity_search_with_score(question, k=5)
+    def search_chroma(self, question, querry_type):
 
-        context = "\n\n---\n\n".join([doc.page_content for doc, _score in results])
+        if querry_type == "text":
+            # Search the DB
+            results = self.db.similarity_search_with_score(question, k=5)
+            context = "\n\n---\n\n".join([doc.page_content for doc, _score in results])
+        
+        elif querry_type == "resume":
+            results = self.db.get()
+            context = "\n\n---\n\n".join(results["documents"])    
 
         return context
+    
+    def remove_chroma(self):
+              
+        if os.path.isdir(self.data_path):
+            shutil.rmtree(self.data_path)
+
+        self.db.delete_collection()
+        self.docs = None
