@@ -40,20 +40,20 @@ class rag_llm:
         # if new documents added
         if self.docs:
             # save them to the vector database
-            self.add_documents()
+            self.add_chunks()
 
     # read PDF files and store them into the vector database           
-    def add_documents(self):
+    def add_chunks(self):
         # create chunks of the file
         chunks = self.split_text(self.docs)
         # save the chunks to the database as
-        self.retriever = self.save_to_chroma(chunks)
+        self.save_to_chroma(chunks)
     
     # split the pdf in smaller chunks and filter metadata
     def split_text(self, documents):
         # instance for a text splitter
         text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size=82,        
+            chunk_size=800,        
             chunk_overlap=100,
             length_function=len,
             add_start_index=True,

@@ -1,9 +1,5 @@
-import matplotlib.pyplot as plt
-
 import torch
-from diffusers import StableDiffusionPipeline, DiffusionPipeline, DDIMScheduler, DPMSolverMultistepScheduler
-from huggingface_hub import hf_hub_download
-
+from diffusers import StableDiffusionPipeline, DPMSolverMultistepScheduler
 
 class img_gen:
     def __init__(self) -> None: 
