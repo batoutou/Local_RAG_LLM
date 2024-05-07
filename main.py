@@ -108,7 +108,7 @@ if question := st.chat_input(placeholder="Ask your question here !"):
                 # query the pdf DB for useful data
                 context = query_llm.search_chroma(question, query_type)
                 # get a proper answer based on this useful data and the model's knowledge 
-                answer = langchain_llm.get_chatbot_answer(question, context, query_type="text")
+                answer = langchain_llm.get_chatbot_answer(question, context=context, query_type=query_type)
                 # send the text to the message buffer
                 st.write(answer)
             
