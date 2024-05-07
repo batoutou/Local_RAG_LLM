@@ -84,15 +84,15 @@ if question := st.chat_input(placeholder="Ask your question here !"):
     st.chat_message("user").markdown(question)
 
     # check whether the user wants a text answer or a generated image
-    querry_type = langchain_llm.get_querry_type(question)
+    query_type = langchain_llm.get_query_type(question)
     
     # if he wants an image
-    if querry_type == "img":
+    if query_type == "img":
         # display a spinning circle will the program runs
         with st.chat_message("assistant"):
             with st.spinner("Thinking..."):  
                 # create an adequate LangChain prompt to generate images
-                prompt = langchain_llm.get_chatbot_answer(question, querry_type="img")
+                prompt = langchain_llm.get_chatbot_answer(question, query_type="img")
                 # call the Stable Diffusion model to generate the image
                 image = image_gen.generate_img(question)  
                 # send the image to the message buffer
@@ -105,10 +105,10 @@ if question := st.chat_input(placeholder="Ask your question here !"):
         # display a spinning circle will the program runs
         with st.chat_message("assistant"):
             with st.spinner("Thinking..."):
-                # querry the pdf DB for useful data
-                context = query_llm.search_chroma(question, querry_type)
+                # query the pdf DB for useful data
+                context = query_llm.search_chroma(question, query_type)
                 # get a proper answer based on this useful data and the model's knowledge 
-                answer = langchain_llm.get_chatbot_answer(question, context, querry_type="text")
+                answer = langchain_llm.get_chatbot_answer(question, context, query_type="text")
                 # send the text to the message buffer
                 st.write(answer)
             

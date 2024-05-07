@@ -94,15 +94,15 @@ class rag_llm:
             self.db = Chroma(persist_directory=self.db_path, client=client, collection_name="Documents", embedding_function=self.embeddings)
 
     # search within the DB for relevant data 
-    def search_chroma(self, question, querry_type):
+    def search_chroma(self, question, query_type):
         # if we ask for a text answer
-        if querry_type == "text":
+        if query_type == "text":
             # Search the DB for 5 closest chunks of data
             results = self.db.similarity_search_with_score(question, k=5)
             context = "\n\n---\n\n".join([doc.page_content for doc, _score in results])
         
         # if we want a PDF resume
-        elif querry_type == "resume":
+        elif query_type == "resume":
             # get all the chunks
             results = self.db.get()
             context = "\n\n---\n\n".join(results["documents"])    

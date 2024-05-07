@@ -1,11 +1,11 @@
 matplotlib
 
-# langchain[all]
-# pypdf
-# streamlit
+langchain[all]
+pypdf
+streamlit
 
-# # Vector DB
-# chromadb
+# Vector DB
+chromadb
 
 # stable diffusion
 huggingface_hub
