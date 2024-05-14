@@ -1,4 +1,4 @@
-# **Kickmaker Chatbot : How to play with GenAI at home**
+# **The Fun Chatbot : How to play with GenAI at home**
 ## Introduction
 The rapid advancement of artificial intelligence (AI) has led to the development of various chatbots that can converse with humans. However, most existing chatbots are limited in their capabilities, only able to answer questions or provide information within a specific domain or cost money to use. In this article, we will show you how to build an AI chatbot that not only answers questions but also generates images using the stable diffusion model and provides a RAG module to question you documents.
 
@@ -93,7 +93,7 @@ st.set_page_config(layout="wide")
 st.components.v1.html(custom_html)
 
 # print the main title
-st.title("Kickmaker AI bot !")
+st.title("The Fun AI bot !")
 ```
 
 The page layout is built afterwards. 

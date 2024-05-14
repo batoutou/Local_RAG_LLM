@@ -21,7 +21,7 @@ if "files" not in st.session_state.keys():
 # custom HTML code for visual 
 custom_html = """
         <div class="banner">
-            <img src="https://www.les-soudes.com/app/uploads/2021/08/logo_kickmaker_CMJN_black-1-Simon-Fressy.png" alt="Banner Image">
+            <img src="images/fun_bot.png" alt="Banner Image">
         </div>
         <style>
             .banner {
@@ -47,7 +47,7 @@ st.sidebar.subheader("Upload Files")
 uploaded_file = st.sidebar.file_uploader("Upload files to add to your knowledge data base", type=['pdf'], accept_multiple_files=True)
 
 # print the main title
-st.title("Kickmaker AI bot !")
+st.title("The Fun AI bot !")
 
 # check if a new pdf file was uploaded
 if uploaded_file:
