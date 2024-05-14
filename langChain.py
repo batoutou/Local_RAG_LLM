@@ -36,6 +36,7 @@ class langchain :
         self.query_template = """Based on the following prompt, I just want to know whether the user is expecting a text answer or a generated image or a resume of a given pdf file. 
             If it is suppose to be a text answer just return: text. If it is supposed to be a generated image just return:  img. If it is supposed to be a resume just return:  resume.
             The prompt is : {question}
+            If you are not sure : say that you don't understand the query
             """
                         
         self.llm = self.get_llm()
